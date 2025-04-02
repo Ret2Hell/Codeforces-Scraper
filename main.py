@@ -15,7 +15,7 @@ console = Console()
 
 @app.command()
 def scrape_problem(
-    url: str = typer.Option(..., prompt="Enter the problem URL", help="The URL of the Codeforces problem to scrape")
+    url: str = typer.Option(..., prompt="Enter the problem URL(e.g., https://codeforces.com/contest/2092/problem/B)", help="The URL of the Codeforces problem to scrape")
 ) -> None:
     """
     Scrape a single Codeforces problem.
@@ -34,7 +34,7 @@ def scrape_problem(
 
 @app.command()
 def scrape_contest(
-    url: str = typer.Option(..., prompt="Enter the contest URL", help="The URL of the Codeforces contest to scrape")
+    url: str = typer.Option(..., prompt="Enter the contest URL(e.g., https://codeforces.com/contest/2092)", help="The URL of the Codeforces contest to scrape")
 ) -> None:
     """
     Scrape all problems from a Codeforces contest.
