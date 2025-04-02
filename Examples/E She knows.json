@@ -1,0 +1,28 @@
+{
+    "problem": {
+        "title": "E. She knows...",
+        "description": "D. Pippy is preparing for a \"black-and-white\" party at his home. He only needs to repaint the floor in his basement, which can be represented as a board of size n×mn×m.After the last party, the entire board is painted green, except for some kk cells (x1,y1),(x2,y2),…,(xk,yk)(x1,y1),(x2,y2),…,(xk,yk), each of which is painted either white or black. For the upcoming party, D. Pippy wants to paint each of the remaining green cells either black or white. At the same time, he wants the number of pairs of adjacent cells with different colors on the board to be even after repainting.Formally, if A={((i1,j1),(i2,j2)) | 1≤i1,i2≤n,1≤j1,j2≤m,i1+j1<i2+j2,|i1−i2|+|j1−j2|=1,color(i1,j1)≠color(i2,j2)}, where color(x,y) denotes the color of the cell (x,y), then it is required that |A| be even.Help D. Pippy find the number of ways to repaint the floor so that the condition is satisfied. Since this number can be large, output the remainder of its division by 109+7.",
+        "input": "InputEach test consists of several test cases. The first line of the input data contains one integer t (1≤t≤104) — the number of test cases. The description of the test cases follows.The first line of each test case contains three integers n,m,k (3≤n,m≤109; 1≤k≤2⋅105) — the dimensions of the board and the number of cells that are initially not green.In the i-th of the following k lines of each test case, there are three integers xi,yi and ci (1≤xi≤n;1≤yi≤m; ci∈{0,1}) — the coordinates of the cell and its color (if white, then ci=0; if black, then ci=1). It is guaranteed that all cells are distinct.It is guaranteed that the sum of k across all test cases does not exceed 2⋅105.",
+        "output": "OutputFor each test case, output a single integer — the answer modulo 109+7.",
+        "time_limit": "2 seconds",
+        "memory_limit": "256 megabytes",
+        "tags": [
+            "combinatorics",
+            "constructive algorithms",
+            "constructive algorithms",
+            "graphs",
+            "math",
+            "*2100"
+        ],
+        "examples": [
+            {
+                "input": "23 3 61 1 01 2 11 3 03 1 13 2 03 3 13 4 121 1 01 2 11 3 01 4 12 1 12 2 02 3 12 4 03 1 03 2 13 3 03 4 1",
+                "output": "4 0"
+            }
+        ]
+    },
+    "solution": {
+        "description": "Let S be the set of cells that have an odd number of neighbouring cells. It is easy to observe that S consists of border cells, excluding the corner ones. More precisely, S={(i,j) | (i∈{1,n}) ⨁ (j∈{1,m})=1}Idea 1. I claim that the number of adjacent border cell pairs with different colors is even. Indeed, if we walk along the border—which essentially forms a cycle—starting and ending at (1,1), we must change color an even number of times.Idea 2. It can be observed that the parity of |A| does not change when flipping the color of any cell not in S, since such a cell has an even number of neighbouring cells. Therefore, if we fix the coloring of the border cells, the parity of |A| remains unchanged if we imagine recoloring all non-border cells white. This implies that the parity of |A| depends solely on the parity of the number of black (or white) cells in S. Moreover, it can be seen that these parities are actually equal.Idea 3. Now, we are left with counting the number of colorings such that |S| contains an even number of black cells. Let's consider two cases: All cells in S are initially colored. In this case, the answer is 2n⋅m−k if the number of black cells in S is even, and 0 otherwise, since the colors of the remaining cells do not affect the parity. At least one cell in S is uncolored. In this case, the answer is 2n⋅m−k−1. This follows from the basic identity of the binomial coefficients: C0n+C2n+C4n+⋯=C1n+C3n+C5n+…",
+        "code": "#include <iostream>\n#include <vector>\n \nusing namespace std;\n \nusing ll = long long;\nconst ll mod = 1000000007;\n \nll binpow (ll a, ll n) {\n    ll res = 1;\n    while (n) {\n        if (n & 1) {\n            res *= a; res %= mod;\n        }\n        a *= a; a %= mod; n >>= 1;\n    }\n    return res;\n}\n \nvoid solve() {\n    ll n, m, k; cin >> n >> m >> k;\n    int good = 0, sum = 0;\n    for (int i = 0; i < k; ++i) {\n        int x, y, c; cin >> x >> y >> c;\n        if ((x == 1 && y == 1) || (x == 1 && y == m) || (x == n && y == 1) || (x == n && y == m)) continue;\n        if (x == 1 || y == 1 || x == n || y == m) {\n            ++good; sum += c;\n        }\n    }\n    if (good == 2 * (n + m - 4)) {\n        cout << (sum % 2 ? 0 : binpow(2, n * m - k)) << '\\n';\n    } else {\n        cout << binpow(2, n * m - k - 1) << '\\n';\n    }\n}\n \nsigned main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(nullptr);\n    cout.tie(nullptr);\n    int t; cin >> t;\n    while (t--) solve();\n}\n\n"
+    }
+}

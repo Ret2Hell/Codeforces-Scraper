@@ -1,0 +1,26 @@
+{
+    "problem": {
+        "title": "C. Asuna and the Mosquitoes",
+        "description": "For her birthday, each of Asuna's nn admirers gifted her a tower. The height of the tower from the ii-th admirer is equal to aiai. Asuna evaluates the beauty of the received gifts as max(a1,a2,…,an)max(a1,a2,…,an). She can perform the following operation an arbitrary number of times (possibly, zero). Take such 1≤i≠j≤n1≤i≠j≤n that ai+ajai+aj is odd and ai>0ai>0, then decrease aiai by 11 and increase ajaj by 11. It is easy to see that the heights of the towers remain non-negative during the operations. Help Asuna find the maximum possible beauty of the gifts after any number of operations!",
+        "input": "InputEach test consists of several test cases. The first line of the input data contains one integer tt (1≤t≤1041≤t≤104) — the number of test cases. The description of the test cases follows.The first line of each test case contains a single integer nn (1≤n≤2⋅1051≤n≤2⋅105) — the number of admirers of Asuna.The second line of each test case contains nn integers a1,a2,…,an (1≤ai≤109)a1,a2,…,an (1≤ai≤109) — the heights of the towers.It is guaranteed that the sum of nn across all test cases does not exceed 2⋅1052⋅105.",
+        "output": "OutputFor each test case, output a single integer: the maximum value of the beauty of the gifts that Asuna can achieve.",
+        "time_limit": "2 seconds",
+        "memory_limit": "256 megabytes",
+        "tags": [
+            "constructive algorithms",
+            "greedy",
+            "math",
+            "*1200"
+        ],
+        "examples": [
+            {
+                "input": "435 3 923 241 2 2 155 4 3 2 9",
+                "output": "9 5 5 21"
+            }
+        ]
+    },
+    "solution": {
+        "description": "Case 1. All numbers in aa have the same parity. In this case, it is impossible to perform any operation, so the answer is max(a)max(a).Case 2. There is at least one even and one odd number. Let SS be the sum of all numbers, and kk be the number of odd numbers in the array. We will now prove that the answer is S−k+1S−k+1. First of all, the answer cannot exceed S−k+1S−k+1, since the number of odd elements in the array remains unchanged after performing the operation.Secondly, we will show that S−k+1S−k+1 is always achievable. Consider an arbitrary odd number A∈aA∈a. We can then merge all even numbers into AA (i.e. (A,2k)->(A+2k,0))(i.e. (A,2k)->(A+2k,0)), resulting in an array consisting of the number A+2mA+2m, k−1k−1 odd numbers, and zeros for the remaining elements (here 2m2m denotes the sum of all even numbers in the initial array). After this step, for each remaining odd number, we can sacrifice one unit by transferring it to any zero element in the array and then merge the resulting even number into AA. It's easy to see that there will always be at least one zero available in the array before merging each odd number. Eventually, we will obtain an array consisting of one element equal to S−k+1S−k+1, k−1k−1 elements equal to one, and zeros filling the remaining positions.Therefore, the answer in this case will be S−k+1S−k+1.",
+        "code": "t = int(input())\n \nfor test in range(t):\n    n = int(input())\n    a = [int(i) for i in input().split()]\n    ans, cnt = 0, 0\n    for i in a:\n        ans += i\n        cnt += i % 2\n        \n    if not cnt or cnt == n:\n        print(max(a))\n    else:\n        print(ans - cnt + 1)\n\n"
+    }
+}

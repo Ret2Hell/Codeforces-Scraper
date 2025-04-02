@@ -1,0 +1,25 @@
+{
+    "problem": {
+        "title": "A. Brogramming Contest",
+        "description": "One day after waking up, your friend challenged you to a brogramming contest. In a brogramming contest, you are given a binary string∗∗ ss of length nn and an initially empty binary string tt. During a brogramming contest, you can make either of the following moves any number of times: remove some suffix†† from ss and place it at the end of tt, or remove some suffix from tt and place it at the end of ss. To win the brogramming contest, you must make the minimum number of moves required to make ss contain only the character 00 and tt contain only the character 11. Find the minimum number of moves required.∗∗A binary string is a string consisting of characters 00 and 11.††A string aa is a suffix of a string bb if aa can be obtained from deletion of several (possibly, zero or all) elements from the beginning of bb.",
+        "input": "InputThe first line contains an integer tt (1≤t≤1001≤t≤100) — the number of test cases.The first line of each test case is an integer nn (1≤n≤10001≤n≤1000) — the length of the string ss.The second line of each test case contains the binary string ss.The sum of nn across all test cases does not exceed 10001000.",
+        "output": "OutputFor each testcase, output the minimum number of moves required.",
+        "time_limit": "1 second",
+        "memory_limit": "256 megabytes",
+        "tags": [
+            "greedy",
+            "strings",
+            "*800"
+        ],
+        "examples": [
+            {
+                "input": "55001104111130015000003101",
+                "output": "2 1 1 0 3"
+            }
+        ]
+    },
+    "solution": {
+        "description": "Notice that if s starts with a 1 we must move the entire string s to t at some point. Also Notice that if we perform the operation, the total number of occurrences of 01 and 10 across both strings can only decrease by one. This gives us an upper bound on the answer being the number of occurrences of 01 and 10 in s adding one to this if it starts with the character 1. Now the following construction uses the same number of moves as the upper bound (thus showing it is the minimum number of moves): If s begins with 1 then select the entire string s and move it to t. Then repeatedly find the first character in s or t which is not equal to the character before it (note under this construction such an index can only exist in one string at a time) and selected the suffix starting from this character and move it to the other string. During this construction some prefix of s will contain 0s and some prefix of t will contain 1s, so after each move the total number of 01 and 10 will decrease.So the answer to this problem will be the number of 01 and 10 in s adding one to the answer if it starts with 1.",
+        "code": "#include<bits/stdc++.h>\nusing namespace std;\ntypedef long long ll;\n#define debug(x) cout << #x << \" = \" << x << \"\\n\";\n#define vdebug(a) cout << #a << \" = \"; for(auto x: a) cout << x << \" \"; cout << \"\\n\";\nmt19937 rng(chrono::steady_clock::now().time_since_epoch().count());\nint uid(int a, int b) { return uniform_int_distribution<int>(a, b)(rng); }\nll uld(ll a, ll b) { return uniform_int_distribution<ll>(a, b)(rng); }\n\nvoid solve(){\n    int n;\n    cin >> n;\n    \n    string s;\n    cin >> s;\n    \n    int ans = 0;\n    for (int i = 0; i < n - 1; i++) {\n        if (s[i] != s[i + 1]) ans++;\n    }\n\n    if (s[0] == '1') ans++;\n    cout << ans << \"\\n\";\n}\n\nint main(){\n    ios::sync_with_stdio(false);\n    cin.tie(0);\n    cout.tie(0);\n    \n    int t;\n    cin >> t;\n    while (t--) solve();\n}"
+    }
+}
