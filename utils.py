@@ -70,7 +70,8 @@ def fetch_page(url: str) -> str:
         raise Exception("Failed to bypass Cloudflare challenge after multiple attempts.")
     finally:
         if driver:
-            driver.quit()
+            driver.close()
+            time.sleep(0.1)
 
 def save_data(title: str, data: dict, console) -> None:
     """
