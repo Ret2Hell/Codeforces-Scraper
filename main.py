@@ -51,6 +51,30 @@ def scrape_contest(
             console.print(f"[bold red]Error:[/bold red] {e}")
             raise typer.Exit(code=1)
 
+def get_browser_choice() -> str:
+    """
+    Prompt the user to select a browser.
+    """
+    console.print("\n[bold]Select a browser:[/bold]\n")
+    console.print("1. Chrome")
+    console.print("2. Firefox")
+    console.print("3. Exit\n")
+    try:
+        browser_choice = typer.prompt("Enter your choice", type=int)
+    except Exception:
+        console.print("[red]Invalid input. Exiting.[/red]")
+        raise typer.Exit()
+    if browser_choice == 1:
+        return "chrome"
+    elif browser_choice == 2:
+        return "firefox"
+    elif browser_choice == 3:
+        console.print("Goodbye! 👋")
+        raise typer.Exit()
+    else:
+        console.print("[red]Invalid choice. Please try again.[/red]")
+        return get_browser_choice()
+
 def main_menu() -> None:
     """
     Displays an interactive menu if no command is provided.
@@ -63,6 +87,8 @@ def main_menu() -> None:
         box=box.DOUBLE_EDGE,
     )
     console.print(banner)
+    browser = get_browser_choice()
+
     console.print("\n[bold]Select an option:[/bold]\n")
     console.print("1. Scrape a single problem")
     console.print("2. Scrape a contest")
@@ -75,22 +101,22 @@ def main_menu() -> None:
 
     if choice == 1:
         url = typer.prompt("Enter the problem URL(e.g., https://codeforces.com/contest/2092/problem/B)")
-        scrape_problem_callback(url)
+        scrape_problem_callback(url, browser)
     elif choice == 2:
         url = typer.prompt("Enter the contest URL(e.g., https://codeforces.com/contest/2092)")
-        scrape_contest_callback(url)
+        scrape_contest_callback(url, browser)
     elif choice == 3:
         console.print("Goodbye! 👋")
         raise typer.Exit()
     else:
         console.print("[red]Invalid choice. Please try again.[/red]")
-        main_menu()  # Loop back to menu
+        raise typer.Exit()
 
-def scrape_problem_callback(url: str) -> None:
+def scrape_problem_callback(url: str, browser: str) -> None:
     """
     Callback for scraping a single problem using the provided URL.
     """
-    scraper = CodeforcesScraper(problem_url=url, console=console)
+    scraper = CodeforcesScraper(problem_url=url, console=console, browser=browser)
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("Scraping problem...", start=False)
         progress.start_task(task)
@@ -101,11 +127,11 @@ def scrape_problem_callback(url: str) -> None:
         except Exception as e:
             console.print(f"[bold red]Error:[/bold red] {e}")
 
-def scrape_contest_callback(url: str) -> None:
+def scrape_contest_callback(url: str, browser: str) -> None:
     """
     Callback for scraping a contest using the provided URL.
     """
-    scraper = CodeforcesScraper(contest_url=url, console=console)
+    scraper = CodeforcesScraper(contest_url=url, console=console, browser=browser)
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         task = progress.add_task("Scraping contest...", start=False)
         progress.start_task(task)
@@ -120,7 +146,6 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
     )
-    # If no command-line arguments are provided, display the interactive menu.
     if len(sys.argv) == 1:
         main_menu()
     else:

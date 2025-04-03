@@ -5,7 +5,7 @@ import time
 from typing import Optional
 from selenium import webdriver
 from undetected_chromedriver import Chrome
-
+from undetected_geckodriver import Firefox
 
 def clean_text(text: Optional[str]) -> str:
     """
@@ -36,12 +36,38 @@ def clean_text(text: Optional[str]) -> str:
     # Remove multiple spaces and trim
     return " ".join(text.split()).strip()
 
-def fetch_page(url: str) -> str:
+def get_driver(browser: str) -> Chrome | Firefox:
+    """
+    Get a Selenium WebDriver instance for the specified browser.
+    This function uses undetected_chromedriver for Chrome and undetected_geckodriver for Firefox.
+
+    Args:
+        browser: The browser to use ('chrome' or 'firefox').
+
+    Returns:
+        A WebDriver instance for the specified browser.
+    """
+    if browser == 'chrome':
+        options = webdriver.ChromeOptions()
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        return Chrome(options=options)
+
+    elif browser == 'firefox':
+        options = webdriver.FirefoxOptions()
+        options.set_preference('dom.webdriver.enabled', False)
+        options.set_preference('useAutomationExtension', False)
+        return Firefox(options=options)
+
+    else:
+        raise ValueError("Unsupported browser. Choose either 'chrome' or 'firefox'.")
+
+def fetch_page(url: str, browser: str) -> str:
     """
     Fetch the HTML content of a page and try to bypass Cloudflare if needed.
 
     Args:
         url: The URL to fetch.
+        browser: The browser to use for fetching the page ('chrome' or 'firefox').
 
     Returns:
         The page source HTML as a string.
@@ -49,12 +75,9 @@ def fetch_page(url: str) -> str:
     Raises:
         Exception: If the page could not be fetched after retries.
     """
-    options = webdriver.ChromeOptions()
-    options.add_argument('--disable-blink-features=AutomationControlled')
-
-    driver: Optional[webdriver.Chrome] = None
+    driver = None
     try:
-        driver = Chrome(options=options)
+        driver = get_driver(browser)
         driver.get(url)
         time.sleep(5)
 

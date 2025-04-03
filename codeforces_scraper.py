@@ -5,12 +5,8 @@ from bs4 import BeautifulSoup
 
 from utils import clean_text, fetch_page, save_data
 
-# Configure logging (you can also configure this in main.py if preferred)
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s [%(levelname)s] %(message)s')
-
 class CodeforcesScraper:
-    def __init__(self, contest_url: str = "", problem_url: str = "", console= None) -> None:
+    def __init__(self, contest_url: str = "", problem_url: str = "", console = None, browser: str = "Chrome") -> None:
         """
         Initialize the scraper with a problem URL.
         """
@@ -21,12 +17,13 @@ class CodeforcesScraper:
         self.solution_data: Dict[str, Any] = {}
 
         self.console = console
+        self.browser = browser
 
     def scrape_problem_statement(self) -> None:
         """
         Scrape problem details from the Codeforces problem page.
         """
-        html_content = fetch_page(self.problem_url)
+        html_content = fetch_page(self.problem_url, self.browser)
         if not html_content:
             raise Exception("Failed to fetch problem page")
 
@@ -95,7 +92,7 @@ class CodeforcesScraper:
             logging.info("No solution URL available")
             return
 
-        html_content = fetch_page(self.editorial_url)
+        html_content = fetch_page(self.editorial_url, self.browser)
         if not html_content:
             logging.info("Failed to fetch solution page")
             return
@@ -142,7 +139,7 @@ class CodeforcesScraper:
         """
         Scrape all problems from a Codeforces contest page.
         """
-        html_content = fetch_page(self.contest_url)
+        html_content = fetch_page(self.contest_url, self.browser)
         soup = BeautifulSoup(html_content, 'html.parser')
         # Find problem links in the contest page (links matching /contest/{id}/problem/{letter})
         problem_links = soup.find_all('a', href=re.compile(r'/contest/\d+/problem/'))
